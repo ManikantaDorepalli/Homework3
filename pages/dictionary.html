@@ -1,0 +1,69 @@
+<!-- dictionary.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary App</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+	<p>Dictionary</p>
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="dictionary.html"></a></li>
+            </ul>
+        </nav>
+	<p>dictionary</p>
+    </header>
+
+    <main>
+        <h1>Dictionary App</h1>
+        <input type="text" id="wordInput" placeholder="Enter a word">
+        <button onclick="getDefinition()">Get Definition</button>
+        <div id="definitionOutput"></div>
+    </main>
+
+    <footer>
+        <p>&copy; Manikanta Dorepalli</p>
+    </footer>
+
+    <script>
+        function getDefinition() {
+            const word = document.getElementById('wordInput').value.trim();
+            const definitionOutput = document.getElementById('definitionOutput');
+
+            if (word === '') {
+                definitionOutput.innerHTML = 'Please enter a word.';
+                return;
+            }
+
+            const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.title === 'No Definitions Found') {
+                        definitionOutput.innerHTML = `No definitions found for "${word}".`;
+                    } else {
+                        let definitions = '';
+                        data[0].meanings.forEach(meaning => {
+                            definitions += `<h3>${meaning.partOfSpeech}</h3>`;
+                            meaning.definitions.forEach(definition => {
+                                definitions += `<p>${definition.definition}</p>`;
+                            });
+                        });
+                        definitionOutput.innerHTML = definitions;
+                    }
+                })
+                .catch(error => {
+                    definitionOutput.innerHTML = `An error occurred: ${error}`;
+                });
+        }
+    </script>
+</body>
+</html>
